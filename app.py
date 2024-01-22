@@ -34,6 +34,12 @@ def get_db():
 
 db_dependency = Annotated[Session, Depends(get_db)]
 
+@app.get("/")
+def mostrar_productos(db:db_dependency):
+    productos = db.query(models.Producto).all()
+    productos_sin_imagen = [{"id": producto.id, "nombreProducto": producto.nombreProducto, "stock": producto.stock, "fecha": producto.fecha, "nombreImagen": producto.nombreImagen, "categoria":producto.categoria} for producto in productos]
+    return productos_sin_imagen
+
 @app.get("/productos",status_code=status.HTTP_200_OK)
 def consultar_productos(db:db_dependency):
     productos = db.query(models.Producto).all()
