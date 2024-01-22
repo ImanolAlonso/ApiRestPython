@@ -59,7 +59,6 @@ def borrar_producto(id, db:db_dependency):
 
 @app.post("/producto/")
 def crear_producto(producto: IntroducirProducto,db: db_dependency):
-# def crear_producto(db: db_dependency,nombreProducto: str,stock: int,fecha: str,categoria:str,imagen: UploadFile = File(...),):
     buscar_categoria = db.query(models.Categoria).filter(models.Categoria.nombreCategoria==producto.categoria).first()
     if buscar_categoria is None:
         raise HTTPException(status_code=404, detail="Categoria no válida")
