@@ -72,7 +72,7 @@ def crear_producto(producto: IntroducirProducto,db: db_dependency):
 
     db.add(db_producto)
     db.commit()
-    return {"mensaje": "El producto se creó exitosamente", "id_producto": db_producto.id}
+    return {"mensaje": "El producto se creó correctamente", "id_producto": db_producto.id}
 
 @app.put("/producto/{id}", status_code=status.HTTP_200_OK)
 def actualizar_producto(id, producto: ActualizarProducto, db: db_dependency):
@@ -90,7 +90,7 @@ def actualizar_producto(id, producto: ActualizarProducto, db: db_dependency):
     actualizar_producto.categoria = buscar_categoria
 
     db.commit()
-    return "El producto se actualizó exitosamente"
+    return "El producto se actualizó correctamente"
 
 #Actualizar imagen de un id concreto
 @app.put("/producto/{id}/imagen", status_code=status.HTTP_200_OK)
@@ -110,7 +110,7 @@ def actualizar_imagen_producto(id, db: db_dependency, imagen: UploadFile = File(
     actualizar_producto.nombreImagen = imagen.filename
 
     db.commit()
-    return "La imagen del producto se actualizó exitosamente"
+    return "La imagen del producto se actualizó correctamente"
 
 #Mostrar imagen de un id concreto
 @app.get("/producto/{id}/imagen/", status_code=status.HTTP_200_OK)
