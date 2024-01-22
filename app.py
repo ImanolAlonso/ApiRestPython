@@ -44,7 +44,7 @@ def consultar_productos(db:db_dependency):
 def consultar_producto(id, db:db_dependency):
     producto = db.query(models.Producto).filter(models.Producto.id==id).first()
     if producto is None:
-        HTTPException(status_code=404, detail="Registro no encontrado")
+        HTTPException(status_code=404, detail="Producto no encontrado")
     producto_sin_imagen = {"id": producto.id, "nombreProducto": producto.nombreProducto, "stock": producto.stock, "fecha": producto.fecha, "nombreImagen": producto.nombreImagen,"categoria":producto.categoria}
     return producto_sin_imagen
 
@@ -52,10 +52,10 @@ def consultar_producto(id, db:db_dependency):
 def borrar_producto(id, db:db_dependency):
     borrarProducto = db.query(models.Producto).filter(models.Producto.id==id).first()
     if borrarProducto is None:
-        HTTPException(status_code=404, detail="No se puede borrar no exite el registro")
+        HTTPException(status_code=404, detail="No se puede borrar no exite el producto")
     db.delete(borrarProducto)
     db.commit()
-    return "EL registro de elimino exitosamente"
+    return "EL producto se eliminó correctamente"
 
 @app.post("/producto/")
 def crear_producto(producto: IntroducirProducto,db: db_dependency):
@@ -66,7 +66,8 @@ def crear_producto(producto: IntroducirProducto,db: db_dependency):
     nombreProducto=producto.nombreProducto,
     stock=producto.stock,
     fecha=producto.fecha,
-    categoria=buscar_categoria
+    categoria=buscar_categoria,
+    nombreImagen = ""
 )
 
     db.add(db_producto)
@@ -96,7 +97,7 @@ def actualizar_producto(id, producto: ActualizarProducto, db: db_dependency):
 def actualizar_imagen_producto(id, db: db_dependency, imagen: UploadFile = File(...)):
     actualizar_producto = db.query(models.Producto).filter(models.Producto.id == id).first()
     if not actualizar_producto:
-        raise HTTPException(status_code=404, detail="No se encuentra el registro")
+        raise HTTPException(status_code=404, detail="No se encuentra el producto")
 
     # Actualizar imagen y nombre de imagen si se proporciona una nueva
     max_size_kb = 64

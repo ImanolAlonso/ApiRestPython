@@ -1,4 +1,4 @@
-from sqlalchemy import String, Integer, Column, BLOB, Date, ForeignKey
+from sqlalchemy import String, Integer, Column, BLOB, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from database import Base
 
@@ -7,8 +7,8 @@ class Producto(Base):
     id = Column(Integer, primary_key=True, index=True)
     nombreProducto = Column(String)
     stock = Column(Integer)
-    fecha = Column(Date)
-    nombreImagen = Column(String)
+    fecha = Column(DateTime)
+    nombreImagen = Column(String, nullable=True)
     imagen = Column(BLOB)
     idCategoria = Column(Integer, ForeignKey('Categoria.idCategoria'))
     categoria = relationship('Categoria', back_populates='productos')
