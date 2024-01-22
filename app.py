@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from typing import List
 from datetime import date
 import io
+from io import BytesIO
 from fastapi.responses import StreamingResponse
 from fastapi.responses import JSONResponse
 
@@ -94,22 +95,26 @@ def actualizar_producto(id, producto: ActualizarProducto, db: db_dependency):
 
 #Actualizar imagen de un id concreto
 @app.put("/producto/{id}/imagen", status_code=status.HTTP_200_OK)
-def actualizar_imagen_producto(id, db: db_dependency, imagen: UploadFile = File(...)):
+def actualizar_imagen_producto(id: int, db: Session = Depends(get_db), imagen: UploadFile = File(...)):
     actualizar_producto = db.query(models.Producto).filter(models.Producto.id == id).first()
+    
     if not actualizar_producto:
         raise HTTPException(status_code=404, detail="No se encuentra el producto")
 
     # Actualizar imagen y nombre de imagen si se proporciona una nueva
     max_size_kb = 64
     max_size_bytes = max_size_kb * 1024
-    if len(imagen.file.read()) > max_size_bytes:
+    imagen_leida = imagen.file.read()
+
+    if len(imagen_leida) > max_size_bytes:
         raise HTTPException(status_code=422, detail="La imagen excede el tamaño máximo permitido (64 KB)")
-    if imagen.file.read() is None:
-        raise HTTPException(status_code=422, detail="Debe introducir una imagen")
-    actualizar_producto.imagen = imagen.file.read()  
+
+    # Guardar la imagen en la base de datos
+    actualizar_producto.imagen = imagen_leida
     actualizar_producto.nombreImagen = imagen.filename
 
     db.commit()
+
     return "La imagen del producto se actualizó correctamente"
 
 #Mostrar imagen de un id concreto
